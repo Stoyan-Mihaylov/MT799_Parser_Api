@@ -1,5 +1,6 @@
 
 using intern.DataAccess.Data;
+using Intern.Web.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 
@@ -11,32 +12,29 @@ namespace Intern
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<BankDatabaseContext>(op =>
-            {
-                op.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            builder.Services
+                .AddEndpointsApiExplorer()
+                .AddSwaggerGen()
+                .AddDbContext<BankDatabaseContext>(op =>
+                {
+                    op.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
 
             builder.Logging.AddNLog("nlog.config");
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
+            app
+                .UseEndpointValidationMiddleware()
+                .UseHttpsRedirection()
+                .UseAuthorization();
 
             app.MapControllers();
 

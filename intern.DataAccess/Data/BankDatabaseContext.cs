@@ -9,7 +9,6 @@ namespace intern.DataAccess.Data
         public DbSet<SwiftFileModel<Guid>?> SwiftFiles { get; set; }
         public BankDatabaseContext(DbContextOptions<BankDatabaseContext> op) : base(op)
         {
-
         }
     }
 }
